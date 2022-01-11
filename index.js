@@ -1,5 +1,22 @@
 import 'dotenv/config.js';
-import cors from 'cors';
+import './db/mongoose.js';
 import express from 'express';
+import { createServer } from 'http';
+import cors from 'cors';
+import errorHandler from './middlewares/errorHandler.js';
+import verifyToken from './middlewares/verifyToken.js';
+import usersRouter from './routes/usersRouter.js';
+import roomsRouter from './routes/roomsRouter.js';
 
 const app = express();
+const server = createServer(app);
+const port = process.env.PORT || 5000;
+
+app.use(cors({ origin: '*' }));
+app.use(express.json());
+app.use('/auth', usersRouter);
+app.use('/location', verifyToken, roomsRouter);
+app.use('*', (req, res) => res.send('Chok API'));
+app.use(errorHandler);
+
+server.listen(port, () => console.log(`Server is running at http://localhost:${port}`));
