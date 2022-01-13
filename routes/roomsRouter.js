@@ -4,7 +4,7 @@ import { getRooms, checkinRoom, createRoom } from '../controllers/rooms.js';
 const roomsRouter = Router();
 
 roomsRouter.get('/', getRooms);
-roomsRouter.get('/:id', checkinRoom);
-roomsRouter.post('/create', createRoom);
+roomsRouter.post('/', createRoom);
+roomsRouter.get('/checkin', checkinRoom);
 
 export default roomsRouter;
