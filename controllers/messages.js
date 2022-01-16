@@ -4,18 +4,22 @@ import Message from '../models/Message.js';
 
 export const getMessages = asyncHandler(async (req, res) => {
   const {
-    params: { id: roomId },
+    room: { _id },
   } = req;
-  const messages = await Message.find({ room: roomId }).populate('user');
+  if (!req.room) throw new ErrorResponse('Room does not exist', 404);
+
+  const messages = await Message.find({ room: _id.toString() }).populate('user');
   res.json(messages);
 });
 
 export const sendMessage = asyncHandler(async (req, res) => {
   const {
-    body: { message },
+    body: { text },
     user: { _id },
-    params: { id: roomId },
+    room: { _id: roomId },
   } = req;
-  const data = await Message.create({ body: message, user: _id, room: roomId });
-  res.json(data);
+  if (!text) throw new ErrorResponse('Text is required', 400);
+  if (!req.room) throw new ErrorResponse('Room does not exist', 404);
+  await Message.create({ text, user: _id, room: roomId });
+  res.json('Your message has been delivered');
 });

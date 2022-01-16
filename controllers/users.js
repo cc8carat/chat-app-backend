@@ -14,7 +14,7 @@ export const signin = asyncHandler(async (req, res) => {
   const match = await bcrypt.compare(password, hash);
   if (!match) throw new ErrorResponse('Password is not correct', 401);
   const token = jwt.sign({ _id, name: username }, process.env.JWT_SECRET);
-  res.json({ _id, name: username, token });
+  res.json({ token });
 });
 
 export const signup = asyncHandler(async (req, res) => {
@@ -27,5 +27,9 @@ export const signup = asyncHandler(async (req, res) => {
   const hash = await bcrypt.hash(password, 5);
   const { _id, name: username } = await User.create({ name, email, password: hash });
   const token = jwt.sign({ _id, name: username }, process.env.JWT_SECRET);
-  res.json({ _id, name: username, token });
+  res.json({ token });
+});
+
+export const getUser = asyncHandler(async (req, res) => {
+  res.json(req.user);
 });
