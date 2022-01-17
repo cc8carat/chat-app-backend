@@ -3,8 +3,13 @@ import ErrorResponse from '../utils/ErrorResponse.js';
 import Room from '../models/Room.js';
 
 export const getRooms = asyncHandler(async (req, res) => {
-  console.log(req.user);
-  res.json('Here is the map');
+  const {
+    query: { longitude, latitude },
+  } = req;
+
+  if (!longitude | !latitude) throw new ErrorResponse('longitude and latitude are required');
+  const rooms = await Room.find({ location: { $near: { $geometry: { type: 'Point', coordinates: [longitude, latitude] }, $maxDistance: 3500 } } });
+  res.json(rooms);
 });
 
 export const createRoom = asyncHandler(async (req, res) => {

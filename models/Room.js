@@ -12,5 +12,6 @@ export const roomSchema = new Schema({
   lastModify: { type: Date, index: { unique: true, expires: '180d' } },
   createdAt: { type: Date, default: Date.now },
 });
+roomSchema.index({ location: '2dsphere' });
 
 export default model('Room', roomSchema);

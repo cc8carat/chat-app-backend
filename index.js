@@ -16,7 +16,7 @@ const port = process.env.PORT || 5000;
 app.use(cors({ origin: '*' }));
 app.use(express.json());
 app.use('/auth', usersRouter);
-app.use('/room', verifyToken, roomsRouter);
+app.use('/room', roomsRouter);
 app.use('/message', verifyToken, messageRouter);
 app.use('*', (req, res) => res.send('Chok API'));
 app.use(errorHandler);

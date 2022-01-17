@@ -7,7 +7,6 @@ export const getMessages = asyncHandler(async (req, res) => {
     room: { _id },
   } = req;
   if (!req.room) throw new ErrorResponse('Room does not exist', 404);
-
   const messages = await Message.find({ room: _id.toString() }).populate('user');
   res.json(messages);
 });
