@@ -9,12 +9,18 @@ export const signin = asyncHandler(async (req, res) => {
     body: { email, password },
   } = req;
   if (!email || !password) throw new ErrorResponse('Email, password are required', 400);
-  const { _id, name: username, password: hash } = await User.findOne({ email }).select('+password');
-  if (!_id) throw new ErrorResponse('User does not exsit', 404);
-  const match = await bcrypt.compare(password, hash);
-  if (!match) throw new ErrorResponse('Password is not correct', 401);
-  const token = jwt.sign({ _id, name: username }, process.env.JWT_SECRET);
-  res.json({ token });
+
+  const user = await User.findOne({ email }).select('+password');
+  if (!user) {
+    throw new ErrorResponse('User does not exsit. Please sign up', 404);
+  }
+  if (user) {
+    const { _id, name: username, password: hash } = user;
+    const match = await bcrypt.compare(password, hash);
+    if (!match) throw new ErrorResponse('Password is not correct', 401);
+    const token = jwt.sign({ _id, name: username }, process.env.JWT_SECRET);
+    res.json({ token });
+  }
 });
 
 export const signup = asyncHandler(async (req, res) => {
